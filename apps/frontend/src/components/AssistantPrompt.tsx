@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import type { MessageDto } from "@pyrock/shared";
 import { CLARIFYING_QUESTIONS } from "../utils/failureMessages";
+import { Icon } from "./Icon";
 
 interface AssistantPromptProps {
   message: MessageDto;
@@ -36,6 +37,10 @@ export function AssistantPrompt({
 
   return (
     <div className="assistant-prompt">
+      <span className="assistant-prompt__avatar">
+        <Icon name="sparkle" size={14} />
+      </span>
+      <p className="assistant-prompt__label">Pyrock</p>
       <p className="assistant-prompt__question">{question}</p>
       <form className="assistant-prompt__form" onSubmit={handleSubmit}>
         <input

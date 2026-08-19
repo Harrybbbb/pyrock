@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChatWindow } from "./components/ChatWindow";
+import { Logo } from "./components/Icon";
 import { EmptyState } from "./components/EmptyState";
 import { InventoryPanel } from "./components/InventoryPanel";
 import { SiteSelector } from "./components/SiteSelector";
@@ -64,31 +65,41 @@ export function App() {
 
   return (
     <div className="app">
-      <header className="app__header">
+      <header className="app__topbar">
         <div className="app__brand">
-          <span className="app__logo" aria-hidden="true">
-            🏗️
+          <span className="app__logo">
+            <Logo />
           </span>
-          <div>
-            <h1>Pyrock AI</h1>
-            <p className="app__tagline">Construction Assistant</p>
+          <div className="app__wordmark">
+            <h1>
+              Pyrock <em>AI</em>
+            </h1>
+            <p className="app__tagline">Construction Intelligence</p>
           </div>
         </div>
-        <SiteSelector
-          siteId={siteId}
-          onChange={handleSiteChange}
-          onDelete={handleSiteDeleted}
-        />
+
+        <div className="app__topbar-right">
+          <span className="app__pulse">
+            <span className="app__pulse-dot" aria-hidden="true" />
+            Extraction live
+          </span>
+          <SiteSelector
+            siteId={siteId}
+            onChange={handleSiteChange}
+            onDelete={handleSiteDeleted}
+          />
+        </div>
       </header>
 
       <main className="app__main">
         {!initialized ? (
-          <div className="app__loading">Loading…</div>
+          <div className="app__state">Preparing your workspace…</div>
         ) : sitesError && !siteId ? (
-          <div className="app__loading app__loading--error">{sitesError}</div>
+          <div className="app__state app__state--error">{sitesError}</div>
         ) : siteId ? (
           <>
             <ChatWindow
+              siteId={siteId}
               messages={messages}
               isLoading={messagesLoading}
               isSending={isSending}

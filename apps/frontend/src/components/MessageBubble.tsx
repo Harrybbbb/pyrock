@@ -1,17 +1,52 @@
 import { useState } from "react";
 import type { MessageDto } from "@pyrock/shared";
 import { friendlyFailureMessage } from "../utils/failureMessages";
+import { Icon } from "./Icon";
 import { StatusBadge } from "./StatusBadge";
 
-function formatEvent(event: MessageDto["events"][number]): string {
-  const sign =
-    event.eventType === "MATERIAL_RECEIVED"
-      ? "+"
-      : event.eventType === "MATERIAL_CONSUMED"
-        ? "-"
-        : "";
-  if (event.eventType === "GENERAL_UPDATE") return "General update";
-  return `${sign}${event.quantity ?? "?"} ${event.material ?? "material"} (${event.unit ?? "unit"})`;
+type EventDto = MessageDto["events"][number];
+
+/** received → credit, consumed → debit, anything else → a plain note on the log. */
+function eventTone(event: EventDto): "in" | "out" | "note" {
+  if (event.eventType === "MATERIAL_RECEIVED") return "in";
+  if (event.eventType === "MATERIAL_CONSUMED") return "out";
+  return "note";
+}
+
+function EventLine({ event }: { event: EventDto }) {
+  const tone = eventTone(event);
+  const sign = tone === "in" ? "+" : tone === "out" ? "−" : "•";
+
+  return (
+    <li className={`event-line event-line--${tone}`}>
+      <span className="event-line__sign" aria-hidden="true">
+        {sign}
+      </span>
+      {tone === "note" ? (
+        <span className="event-line__material">General update</span>
+      ) : (
+        <>
+          <span className="event-line__qty">{event.quantity ?? "?"}</span>
+          <span className="event-line__material">
+            {event.material ?? "material"}
+          </span>
+          <span className="event-line__unit">{event.unit ?? "unit"}</span>
+        </>
+      )}
+    </li>
+  );
+}
+
+function formatTime(timestamp: string): string {
+  const date = new Date(timestamp);
+  const today = new Date();
+  const sameDay = date.toDateString() === today.toDateString();
+  const time = date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  if (sameDay) return time;
+  return `${date.toLocaleDateString([], { day: "numeric", month: "short" })} · ${time}`;
 }
 
 interface MessageBubbleProps {
@@ -29,25 +64,31 @@ export function MessageBubble({
   const canBlindRetry = message.failureCode === "PROVIDER_ERROR";
 
   return (
-    <div className="message-bubble">
+    <article
+      className={`message-bubble message-bubble--${message.status.toLowerCase()}`}
+    >
       <div className="message-bubble__header">
-        <span className="message-bubble__time">
-          {new Date(message.timestamp).toLocaleString()}
+        <span
+          className="message-bubble__time"
+          title={new Date(message.timestamp).toLocaleString()}
+        >
+          {formatTime(message.timestamp)}
         </span>
         <StatusBadge status={message.status} />
       </div>
+
       <p className="message-bubble__text">{message.text}</p>
 
       {message.clarification && (
         <p className="message-bubble__clarification">
-          + {message.clarification}
+          {message.clarification}
         </p>
       )}
 
       {message.events.length > 0 && (
         <ul className="message-bubble__events">
           {message.events.map((event, index) => (
-            <li key={index}>{formatEvent(event)}</li>
+            <EventLine key={index} event={event} />
           ))}
         </ul>
       )}
@@ -55,14 +96,17 @@ export function MessageBubble({
       {message.failureReason && (
         <div className="message-bubble__failure">
           <p className="message-bubble__failure-reason" role="alert">
-            {friendlyFailureMessage(message.failureCode, message.failureReason)}{" "}
-            <button
-              type="button"
-              className="text-button text-button--muted"
-              onClick={() => setShowDetails((value) => !value)}
-            >
-              {showDetails ? "hide details" : "details"}
-            </button>
+            <Icon name="alert" size={14} />
+            <span>
+              {friendlyFailureMessage(message.failureCode, message.failureReason)}{" "}
+              <button
+                type="button"
+                className="text-button text-button--muted"
+                onClick={() => setShowDetails((value) => !value)}
+              >
+                {showDetails ? "hide details" : "details"}
+              </button>
+            </span>
           </p>
           {showDetails && (
             <p className="message-bubble__failure-detail">
@@ -80,10 +124,11 @@ export function MessageBubble({
             disabled={disabled}
             onClick={() => onRetry(message.text)}
           >
-            Retry
+            <Icon name="retry" size={13} />
+            Try again
           </button>
         </div>
       )}
-    </div>
+    </article>
   );
 }

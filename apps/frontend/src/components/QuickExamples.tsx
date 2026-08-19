@@ -1,3 +1,5 @@
+import { Icon } from "./Icon";
+
 const EXAMPLES = [
   {
     label: "English",
@@ -17,17 +19,18 @@ interface QuickExamplesProps {
 
 export function QuickExamples({ disabled, onPick }: QuickExamplesProps) {
   return (
-    <div className="chip-row chip-row--examples">
-      <span className="chip-row__label">Try:</span>
+    <div className="chip-row">
+      <span className="chip-row__label">Try</span>
       {EXAMPLES.map((example) => (
         <button
           key={example.label}
           type="button"
-          className="chip chip--example"
+          className="chip"
           disabled={disabled}
           onClick={() => onPick(example.text)}
           title={example.text}
         >
+          <Icon name="sparkle" size={12} />
           {example.label}
         </button>
       ))}

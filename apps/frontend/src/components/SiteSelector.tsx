@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SITE_ID_PATTERN } from "@pyrock/shared";
 import { useCreateSite } from "../hooks/useCreateSite";
+import { Icon } from "./Icon";
 import { useDeleteSite } from "../hooks/useDeleteSite";
 import { useSites } from "../hooks/useSites";
 
@@ -90,8 +91,6 @@ export function SiteSelector({ siteId, onChange, onDelete }: SiteSelectorProps) 
 
   return (
     <div className="site-selector" ref={containerRef}>
-      <span className="site-selector__label">Site</span>
-
       <button
         type="button"
         className="site-selector__trigger"
@@ -99,12 +98,14 @@ export function SiteSelector({ siteId, onChange, onDelete }: SiteSelectorProps) 
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
-        <span className="site-selector__trigger-icon" aria-hidden="true">
-          📍
+        <span className="site-selector__trigger-icon">
+          <Icon name="site" size={15} />
         </span>
-        {siteId ?? "Choose site"}
-        <span className="site-selector__chevron" aria-hidden="true">
-          {isOpen ? "▲" : "▼"}
+        <span className="site-selector__trigger-label">
+          {siteId ?? "Choose site"}
+        </span>
+        <span className="site-selector__chevron">
+          <Icon name="chevron" size={14} strokeWidth={2.2} />
         </span>
       </button>
 
@@ -114,7 +115,10 @@ export function SiteSelector({ siteId, onChange, onDelete }: SiteSelectorProps) 
           role="dialog"
           aria-label="Choose site"
         >
-          <div className="site-selector__panel-header">
+          <div className="site-selector__search">
+            <span className="site-selector__search-icon">
+              <Icon name="search" size={15} />
+            </span>
             <input
               ref={inputRef}
               value={query}
@@ -129,14 +133,17 @@ export function SiteSelector({ siteId, onChange, onDelete }: SiteSelectorProps) 
               aria-label="Close site picker"
               title="Close"
             >
-              ×
+              <Icon name="close" size={13} strokeWidth={2.2} />
             </button>
           </div>
 
           <div className="site-selector__list" role="listbox">
             {isLoading && <p className="site-selector__hint">Loading sites…</p>}
             {!isLoading && error && (
-              <p className="site-selector__error">{error}</p>
+              <p className="site-selector__error">
+                <Icon name="alert" size={14} />
+                {error}
+              </p>
             )}
             {!isLoading && !error && sites.length === 0 && (
               <p className="site-selector__hint">No matching sites yet.</p>
@@ -146,8 +153,8 @@ export function SiteSelector({ siteId, onChange, onDelete }: SiteSelectorProps) 
                 pendingDeleteId === site.siteId ? (
                   <div key={site.id} className="site-selector__confirm">
                     <span className="site-selector__confirm-text">
-                      Delete "{site.siteId}"? This also removes its messages
-                      and inventory.
+                      Delete <strong>{site.siteId}</strong>? This also removes
+                      its messages and inventory.
                     </span>
                     <div className="site-selector__confirm-actions">
                       <button
@@ -181,11 +188,8 @@ export function SiteSelector({ siteId, onChange, onDelete }: SiteSelectorProps) 
                       }`}
                       onClick={() => selectSite(site.siteId)}
                     >
-                      <span
-                        className="site-selector__option-icon"
-                        aria-hidden="true"
-                      >
-                        🏢
+                      <span className="site-selector__option-icon">
+                        <Icon name="site" size={15} />
                       </span>
                       <span className="site-selector__option-text">
                         <span className="site-selector__option-id">
@@ -208,13 +212,18 @@ export function SiteSelector({ siteId, onChange, onDelete }: SiteSelectorProps) 
                       aria-label={`Delete ${site.siteId}`}
                       title="Delete site"
                     >
-                      🗑
+                      <Icon name="trash" size={15} />
                     </button>
                   </div>
                 ),
               )}
           </div>
-          {deleteError && <p className="site-selector__error">{deleteError}</p>}
+          {deleteError && (
+            <p className="site-selector__error">
+              <Icon name="alert" size={14} />
+              {deleteError}
+            </p>
+          )}
 
           {canOfferCreate && (
             <button
@@ -228,10 +237,18 @@ export function SiteSelector({ siteId, onChange, onDelete }: SiteSelectorProps) 
                   : undefined
               }
             >
-              {isCreating ? "Adding…" : `+ Add "${trimmedQuery}" as a new site`}
+              <Icon name="plus" size={14} strokeWidth={2.2} />
+              <span>
+                {isCreating ? "Adding…" : `Add "${trimmedQuery}" as a new site`}
+              </span>
             </button>
           )}
-          {createError && <p className="site-selector__error">{createError}</p>}
+          {createError && (
+            <p className="site-selector__error">
+              <Icon name="alert" size={14} />
+              {createError}
+            </p>
+          )}
         </div>
       )}
     </div>

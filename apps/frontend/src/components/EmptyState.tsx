@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { SITE_ID_PATTERN } from "@pyrock/shared";
 import { useCreateSite } from "../hooks/useCreateSite";
+import { Icon, Logo } from "./Icon";
 
 interface EmptyStateProps {
   onSiteCreated: (siteId: string) => void;
@@ -25,13 +26,18 @@ export function EmptyState({ onSiteCreated }: EmptyStateProps) {
   return (
     <div className="empty-state">
       <div className="empty-state__card">
-        <span className="empty-state__icon" aria-hidden="true">
-          🏗️
+        <span className="empty-state__icon">
+          <Logo size={30} />
         </span>
-        <h2>Welcome to Pyrock AI</h2>
+
+        <h2>
+          Site chatter in.
+          <em>A clean ledger out.</em>
+        </h2>
         <p>
-          No construction sites yet. Add your first site to start tracking
-          materials from WhatsApp-style updates.
+          Add your first site and start logging updates the way your team
+          already writes them — Pyrock turns them into tracked material
+          movements.
         </p>
 
         <form className="empty-state__form" onSubmit={handleSubmit}>
@@ -42,8 +48,9 @@ export function EmptyState({ onSiteCreated }: EmptyStateProps) {
             aria-label="New site id"
             autoFocus
           />
-          <button type="submit" disabled={!isValid || isCreating}>
+          <button type="submit" className="btn-primary" disabled={!isValid || isCreating}>
             {isCreating ? "Adding…" : "Add site"}
+            {!isCreating && <Icon name="plus" size={15} strokeWidth={2.2} />}
           </button>
         </form>
 
@@ -52,15 +59,20 @@ export function EmptyState({ onSiteCreated }: EmptyStateProps) {
             Site id may only contain letters, numbers, - and _
           </p>
         )}
-        {error && <p className="empty-state__error">{error}</p>}
+        {error && (
+          <p className="empty-state__error" role="alert">
+            <Icon name="alert" size={14} />
+            {error}
+          </p>
+        )}
 
         <div className="chip-row">
-          <span className="chip-row__label">Try:</span>
+          <span className="chip-row__label">Try</span>
           {SUGGESTIONS.map((suggestion) => (
             <button
               key={suggestion}
               type="button"
-              className="chip chip--example"
+              className="chip"
               onClick={() => setDraft(suggestion)}
             >
               {suggestion}

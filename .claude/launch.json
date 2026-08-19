@@ -3,14 +3,16 @@
   "configurations": [
     {
       "name": "frontend",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pyrock/frontend", "dev"],
+      "cwd": "/Users/rudra/Desktop/pyrock/apps/frontend",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/vite/bin/vite.js", "--port", "5173"],
       "port": 5173
     },
     {
       "name": "backend",
+      "cwd": "/Users/rudra/Desktop/pyrock/apps/backend",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pyrock/backend", "dev"],
+      "runtimeArgs": ["dev"],
       "port": 4000
     }
   ]

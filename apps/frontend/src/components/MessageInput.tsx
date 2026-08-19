@@ -1,4 +1,5 @@
 import { FormEvent } from "react";
+import { Icon } from "./Icon";
 
 interface MessageInputProps {
   value: string;
@@ -25,7 +26,7 @@ export function MessageInput({
         <input
           value={value}
           onChange={(event) => onChangeValue(event.target.value)}
-          placeholder="Type a construction update, e.g. Kal 100 cement bags aaye the…"
+          placeholder="Log an update — e.g. Kal 100 cement bags aaye the…"
           disabled={disabled}
           aria-label="Message text"
           maxLength={2000}
@@ -38,7 +39,7 @@ export function MessageInput({
             aria-label="Clear message"
             title="Clear"
           >
-            ×
+            <Icon name="close" size={13} strokeWidth={2.2} />
           </button>
         )}
       </div>
@@ -46,8 +47,14 @@ export function MessageInput({
         type="submit"
         className="message-input__send"
         disabled={disabled || !value.trim()}
+        aria-label={disabled ? "Sending" : "Send message"}
+        title="Send"
       >
-        {disabled ? "Sending…" : "Send"}
+        {disabled ? (
+          <span className="message-input__send-spinner" />
+        ) : (
+          <Icon name="send" size={19} strokeWidth={1.8} />
+        )}
       </button>
     </form>
   );

@@ -2,8 +2,8 @@ import type { MessageStatus } from "@pyrock/shared";
 
 const STATUS_LABEL: Record<MessageStatus, string> = {
   PENDING: "Pending",
-  PROCESSED: "Processed",
-  NEEDS_REVIEW: "Needs review",
+  PROCESSED: "Logged",
+  NEEDS_REVIEW: "Needs input",
   FAILED: "Failed",
 };
 
